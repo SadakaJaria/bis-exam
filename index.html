@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>محاكي نظم المعلومات المصرفية</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Arial; margin:0; background:#f6f7fb; color:#111}
+    header{padding:14px 16px; background:#111; color:#fff}
+    main{max-width:820px; margin:0 auto; padding:16px}
+    .card{background:#fff; border-radius:12px; padding:14px; margin:10px 0; box-shadow:0 1px 6px rgba(0,0,0,.06)}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    label{display:block; font-size:14px; margin:6px 0}
+    select,input{padding:10px; border:1px solid #ddd; border-radius:10px; font-size:16px; width:100%}
+    button{padding:12px 14px; border:0; border-radius:12px; font-size:16px; cursor:pointer}
+    .btn{background:#111; color:#fff}
+    .btn2{background:#e9ecf6}
+    .pill{display:inline-block; padding:6px 10px; border-radius:999px; background:#e9ecf6; font-size:13px; margin-left:6px}
+    .opt{border:1px solid #ddd; border-radius:12px; padding:12px; margin:8px 0; cursor:pointer; background:#fff}
+    .opt:hover{background:#f6f7fb}
+    .opt.sel{border-color:#111}
+    .muted{color:#555; font-size:14px}
+    .kpi{font-size:22px; font-weight:700}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div style="font-weight:700">محاكي امتحان نظم المعلومات المصرفية</div>
+    <div class="muted" style="color:#cfcfcf" id="sub"></div>
+  </header>
+
+  <main>
+    <div class="card" id="setup">
+      <div class="row">
+        <div style="flex:1; min-width:220px">
+          <label>اختر المحاضرة</label>
+          <select id="lectureSel"></select>
+        </div>
+        <div style="flex:1; min-width:220px">
+          <label>عدد الأسئلة</label>
+          <input id="countInp" type="number" min="1" value="20" />
+        </div>
+        <div style="flex:1; min-width:220px">
+          <label>الوقت</label>
+          <select id="timeSel">
+            <option value="15">15 دقيقة</option>
+            <option value="30">30 دقيقة</option>
+            <option value="45">45 دقيقة</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <label style="flex:1; min-width:220px"><input type="checkbox" id="shuffleQ" checked> خلط الأسئلة</label>
+        <label style="flex:1; min-width:220px"><input type="checkbox" id="shuffleO" checked> خلط الخيارات</label>
+        <label style="flex:1; min-width:220px"><input type="checkbox" id="redoWrong" checked disabled> إعادة الغلط تلقائي بعد الامتحان (مفعّل)</label>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="startBtn">ابدأ الامتحان</button>
+        <button class="btn2" id="resetBtn" title="يمسح التتبع من الجهاز">مسح التتبع</button>
+      </div>
+      <div class="muted" style="margin-top:8px">
+        ✅ يمرّ على كل الأسئلة عبر جلسات عبر نظام “Coverage” (ما يعيد نفس الأسئلة إلا بعد ما يلف على الباقي).
+      </div>
+    </div>
+
+    <div class="card" id="exam" style="display:none">
+      <div class="row" style="justify-content:space-between; align-items:center">
+        <div>
+          <span class="pill" id="pillLecture"></span>
+          <span class="pill" id="pillProg"></span>
+        </div>
+        <div class="kpi" id="timer">00:00</div>
+      </div>
+
+      <div style="margin-top:10px; font-size:18px; font-weight:700" id="qText"></div>
+      <div id="opts"></div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="btn2" id="prevBtn">السابق</button>
+        <button class="btn" id="nextBtn">التالي</button>
+        <button class="btn" id="finishBtn" style="margin-inline-start:auto">إنهاء</button>
+      </div>
+      <div class="muted" style="margin-top:10px" id="hint"></div>
+    </div>
+
+    <div class="card" id="result" style="display:none"></div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+  </script>
+</body>
+</html>
