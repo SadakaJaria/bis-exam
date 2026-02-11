@@ -5,46 +5,372 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>محاكي نظم المعلومات المصرفية</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Icons (Font Awesome) -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Arial; margin:0; background:#f6f7fb; color:#111}
-    header{padding:14px 16px; background:#111; color:#fff}
-    main{max-width:820px; margin:0 auto; padding:16px}
-    .card{background:#fff; border-radius:12px; padding:14px; margin:10px 0; box-shadow:0 1px 6px rgba(0,0,0,.06)}
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    label{display:block; font-size:14px; margin:6px 0}
-    select,input{padding:10px; border:1px solid #ddd; border-radius:10px; font-size:16px; width:100%}
-    button{padding:12px 14px; border:0; border-radius:12px; font-size:16px; cursor:pointer}
-    .btn{background:#111; color:#fff}
-    .btn2{background:#e9ecf6}
-    .pill{display:inline-block; padding:6px 10px; border-radius:999px; background:#e9ecf6; font-size:13px; margin-left:6px}
-    .opt{border:1px solid #ddd; border-radius:12px; padding:12px; margin:8px 0; cursor:pointer; background:#fff}
-    .opt:hover{background:#f6f7fb}
-    .opt.sel{border-color:#111}
-    .muted{color:#555; font-size:14px}
-    .kpi{font-size:22px; font-weight:700}
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-    @media(max-width:520px){.grid{grid-template-columns:1fr}}
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1220;
+      --card:#0E172A;
+      --card2:#0B1324;
+      --stroke:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --gold:#C9A227;
+      --gold2:#F6D36B;
+      --blue:#2A6DF5;
+      --good:#29D391;
+      --warn:#F5C542;
+      --bad:#FF5A6B;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 15% 15%, rgba(42,109,245,.22), transparent 60%),
+        radial-gradient(900px 700px at 85% 10%, rgba(201,162,39,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    header{
+      padding: 16px 16px 10px;
+      position: sticky; top:0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,16,.92), rgba(7,10,16,.55));
+      border-bottom:1px solid rgba(255,255,255,.06);
+      z-index:10;
+    }
+
+    .topbar{
+      max-width: 920px;
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 0;
+    }
+    .logo{
+      width:40px; height:40px;
+      border-radius: 14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(246,211,107,.65), transparent 70%),
+        radial-gradient(26px 26px at 70% 70%, rgba(42,109,245,.35), transparent 70%),
+        linear-gradient(135deg, rgba(201,162,39,.25), rgba(42,109,245,.18));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 10px 18px rgba(0,0,0,.35);
+      display:grid;
+      place-items:center;
+    }
+    .logo i{ color: var(--gold2); font-size:18px; }
+
+    .titlewrap{min-width:0}
+    .title{
+      font-weight: 800;
+      letter-spacing:.2px;
+      font-size: 16px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    #sub{
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .chip i{ color: var(--gold2); }
+
+    main{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(14,23,42,.92), rgba(11,19,36,.92));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin: 14px 0;
+      overflow:hidden;
+      position: relative;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(600px 220px at 20% 0%, rgba(42,109,245,.16), transparent 65%),
+                  radial-gradient(520px 200px at 85% 0%, rgba(201,162,39,.12), transparent 65%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{ position: relative; }
+
+    .grid3{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media(max-width: 820px){
+      .grid3{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 6px 0;
+    }
+
+    .field{
+      position: relative;
+    }
+    select,input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 16px;
+      outline:none;
+    }
+    select:focus,input:focus{
+      border-color: rgba(246,211,107,.55);
+      box-shadow: 0 0 0 4px rgba(201,162,39,.18);
+    }
+
+    .toggles{
+      display:flex; flex-wrap:wrap;
+      gap: 10px 14px;
+      margin-top: 8px;
+    }
+    .toggle{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .toggle input{ width:auto; transform: scale(1.15); accent-color: var(--gold); }
+
+    .actions{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 12px;
+      align-items:center;
+    }
+    button{
+      border:0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 15px;
+      cursor:pointer;
+      transition: transform .08s ease, opacity .2s ease, box-shadow .2s ease;
+    }
+    button:active{ transform: translateY(1px); }
+
+    .btn{
+      color: #0B0F16;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      box-shadow: 0 12px 25px rgba(201,162,39,.18);
+      font-weight: 800;
+    }
+    .btn i{ margin-left: 8px; }
+    .btn:hover{ box-shadow: 0 16px 32px rgba(201,162,39,.22); }
+
+    .btn2{
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .btn2:hover{ opacity:.92; }
+
+    .note{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .note i{ color: var(--gold2); margin-top: 2px; }
+
+    /* Exam */
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: 6px;
+    }
+    .pill i{ color: var(--gold2); }
+
+    .examTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+
+    .timerRing{
+      width: 62px; height: 62px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(42,109,245,.22), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(201,162,39,.18), transparent 60%),
+        rgba(255,255,255,.03);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    }
+    #timer{
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing:.5px;
+    }
+
+    #qText{
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .opt{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding: 12px 12px;
+      margin: 10px 0;
+      cursor:pointer;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+    }
+    .opt:hover{
+      background: rgba(255,255,255,.05);
+      transform: translateY(-1px);
+    }
+    .opt.sel{
+      border-color: rgba(246,211,107,.65);
+      background: rgba(201,162,39,.12);
+    }
+
+    .examActions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .finish{
+      margin-inline-start:auto;
+      background: linear-gradient(135deg, rgba(42,109,245,.95), rgba(42,109,245,.65));
+      color: white;
+      border:1px solid rgba(255,255,255,.10);
+      font-weight: 800;
+      box-shadow: 0 12px 25px rgba(42,109,245,.18);
+    }
+
+    /* Result */
+    .kpi{
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing:.3px;
+    }
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media(max-width: 700px){
+      .resultGrid{ grid-template-columns: 1fr; }
+    }
+
+    .small{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* keep existing IDs compatibility */
   </style>
 </head>
+
 <body>
   <header>
-    <div style="font-weight:700">محاكي امتحان نظم المعلومات المصرفية</div>
-    <div class="muted" style="color:#cfcfcf" id="sub"></div>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><i class="fa-solid fa-building-columns"></i></div>
+        <div class="titlewrap">
+          <div class="title">محاكي نظم المعلومات المصرفية</div>
+          <div id="sub">تحميل بنك الأسئلة...</div>
+        </div>
+      </div>
+
+      <div class="chip" title="يعمل أوفلاين بعد أول فتح">
+        <i class="fa-solid fa-wifi"></i>
+        يعمل أوفلاين
+      </div>
+    </div>
   </header>
 
   <main>
+    <!-- Setup -->
     <div class="card" id="setup">
-      <div class="row">
-        <div style="flex:1; min-width:220px">
-          <label>اختر المحاضرة</label>
+      <div class="grid3">
+        <div class="field">
+          <label><i class="fa-solid fa-layer-group"></i> اختر المحاضرة</label>
           <select id="lectureSel"></select>
         </div>
-        <div style="flex:1; min-width:220px">
-          <label>عدد الأسئلة</label>
+
+        <div class="field">
+          <label><i class="fa-solid fa-list-ol"></i> عدد الأسئلة</label>
           <input id="countInp" type="number" min="1" value="20" />
         </div>
-        <div style="flex:1; min-width:220px">
-          <label>الوقت</label>
+
+        <div class="field">
+          <label><i class="fa-solid fa-clock"></i> الوقت</label>
           <select id="timeSel">
             <option value="15">15 دقيقة</option>
             <option value="30">30 دقيقة</option>
@@ -53,41 +379,52 @@
         </div>
       </div>
 
-      <div class="row" style="margin-top:10px">
-        <label style="flex:1; min-width:220px"><input type="checkbox" id="shuffleQ" checked> خلط الأسئلة</label>
-        <label style="flex:1; min-width:220px"><input type="checkbox" id="shuffleO" checked> خلط الخيارات</label>
-        <label style="flex:1; min-width:220px"><input type="checkbox" id="redoWrong" checked disabled> إعادة الغلط تلقائي بعد الامتحان (مفعّل)</label>
+      <div class="toggles">
+        <div class="toggle"><input type="checkbox" id="shuffleQ" checked> <span>🔀 خلط الأسئلة</span></div>
+        <div class="toggle"><input type="checkbox" id="shuffleO" checked> <span>🎲 خلط الخيارات</span></div>
+        <div class="toggle"><input type="checkbox" id="redoWrong" checked disabled> <span>🔁 إعادة الغلط تلقائي (مفعّل)</span></div>
       </div>
 
-      <div class="row" style="margin-top:12px">
-        <button class="btn" id="startBtn">ابدأ الامتحان</button>
-        <button class="btn2" id="resetBtn" title="يمسح التتبع من الجهاز">مسح التتبع</button>
+      <div class="actions">
+        <button class="btn" id="startBtn"><i class="fa-solid fa-play"></i> ابدأ الامتحان</button>
+        <button class="btn2" id="resetBtn"><i class="fa-solid fa-eraser"></i> مسح التتبع</button>
       </div>
-      <div class="muted" style="margin-top:8px">
-        ✅ يمرّ على كل الأسئلة عبر جلسات عبر نظام “Coverage” (ما يعيد نفس الأسئلة إلا بعد ما يلف على الباقي).
+
+      <div class="note">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+          يمرّ على كل الأسئلة عبر جلسات بنظام <b>Coverage</b> (ما يعيد نفس الأسئلة إلا بعد ما يلف على الباقي).
+          <div class="small">تلميح: بعد أول فتح من GitHub Pages، التطبيق يشتغل أوفلاين.</div>
+        </div>
       </div>
     </div>
 
+    <!-- Exam -->
     <div class="card" id="exam" style="display:none">
-      <div class="row" style="justify-content:space-between; align-items:center">
+      <div class="examTop">
         <div>
-          <span class="pill" id="pillLecture"></span>
-          <span class="pill" id="pillProg"></span>
+          <span class="pill" id="pillLecture"><i class="fa-solid fa-book"></i> </span>
+          <span class="pill" id="pillProg"><i class="fa-solid fa-hashtag"></i> </span>
         </div>
-        <div class="kpi" id="timer">00:00</div>
+
+        <div class="timerRing" title="الوقت المتبقي">
+          <div id="timer">00:00</div>
+        </div>
       </div>
 
-      <div style="margin-top:10px; font-size:18px; font-weight:700" id="qText"></div>
+      <div id="qText"></div>
       <div id="opts"></div>
 
-      <div class="row" style="margin-top:10px">
-        <button class="btn2" id="prevBtn">السابق</button>
-        <button class="btn" id="nextBtn">التالي</button>
-        <button class="btn" id="finishBtn" style="margin-inline-start:auto">إنهاء</button>
+      <div class="examActions">
+        <button class="btn2" id="prevBtn"><i class="fa-solid fa-arrow-right"></i> السابق</button>
+        <button class="btn2" id="nextBtn">التالي <i class="fa-solid fa-arrow-left"></i></button>
+        <button class="finish" id="finishBtn"><i class="fa-solid fa-flag-checkered"></i> إنهاء</button>
       </div>
-      <div class="muted" style="margin-top:10px" id="hint"></div>
+
+      <div class="small" id="hint" style="margin-top:10px"></div>
     </div>
 
+    <!-- Result -->
     <div class="card" id="result" style="display:none"></div>
   </main>
 
